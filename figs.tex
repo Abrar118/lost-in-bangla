@@ -21,9 +21,9 @@
 \node[box] (reuse) at (8.7,0.95) {Reuse its\\English shards};
 \node[box] (cut) at (8.7,-0.95) {Shard with the\\4-step process [1]};
 \node[box] (en) at (11.6,0) {English\\shards};
-\node[box] (bn) at (11.6,-2.6) {Bangla shards\\mirroring English};
+\node[box] (bn) at (11.6,-2.6) {Bangla shards\\matching English};
 \node[dec] (chk) at (6.9,-2.6) {Same facts?};
-\node[dbox] (freeze) at (2.6,-2.6) {Frozen item list\\(EN + BN)};
+\node[dbox] (freeze) at (2.6,-2.6) {Final problem list\\(EN + BN)};
 \draw[arr] (src) -- (pick);
 \draw[arr] (pick) -- (ovl);
 \draw[arr] (ovl.north) |- node[lab, pos=0.75] {yes} (reuse.west);
@@ -36,7 +36,7 @@
 \draw[arr] (chk) -- node[lab, above] {yes} (freeze);
 \draw[arr] (chk.south) |- ++(0,-0.25) -- ++(0,-0.35) -| node[lab, pos=0.25] {no: fix the shard} (bn.south);
 \end{tikzpicture}
-\caption{Dataset preparation. English shards are reused from [1] where possible; every Bangla shard is checked by hand before the item list is frozen.}
+\caption{Dataset preparation. English shards are reused from [1] where possible; every Bangla shard is checked by hand before the problem list is fixed.}
 \end{figure}}
 
 % ---------- Figure: model selection ----------
@@ -60,7 +60,7 @@
 \node[dbox] (qwen) at (13.55,0.25) {Qwen3.8-27B [20]\\user simulator\\+ answer checker};
 \node[note] at (13.55,-1.0) {fixed role,\\never tested};
 \end{tikzpicture}
-\caption{Model selection. Only candidates that pass the pre-set 30\% pilot bar are tested; the simulator model is kept separate from the tested models.}
+\caption{Model selection. Only candidates that pass the 30\% pilot cutoff are tested; the simulator model is kept separate from the tested models.}
 \end{figure}}
 
 % ---------- Figure: simulation ----------
@@ -110,7 +110,7 @@
 \node[box, minimum width=31mm] (unr) at (3.9,-1.0) {Unreliability $U_{10}^{90}$};
 \node[box] (len) at (7.9,1.0) {English loss\\$L_{EN}$ = \textsc{Concat} $-$ \textsc{Sharded}};
 \node[box] (lbn) at (7.9,-0.4) {Bangla loss\\$L_{BN}$ = \textsc{Concat} $-$ \textsc{Sharded}};
-\node[dbox] (delta) at (12.2,0.3) {Extra loss in Bangla\\$\Delta = L_{BN} - L_{EN}$\\(points, 95\% interval)};
+\node[dbox] (delta) at (12.2,0.3) {Extra loss in Bangla\\$\Delta = L_{BN} - L_{EN}$\\(points, 95\% likely range)};
 \node[box] (snow) at (8.7,-1.8) {\textsc{Snowball} gain\\= \textsc{Snowball} $-$ \textsc{Sharded}, per language};
 \node[dbx] (hand) at (0,-1.8) {Hand-check 30 chats\\per language $\to$\\simulator error rate};
 \draw[dashed] (runs.south) -- (hand.north);

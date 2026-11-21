@@ -94,7 +94,7 @@
 \node[font=\Large\bfseries, text=BN] at (73.5,25) {?};
 % row 3
 \node[font=\large, text=GOOD] at (40,16) {$\checkmark$};
-\node[t, text=GRY] at (57,16) {Filipino [9]};
+\node[t] at (57,16) {\textcolor{GOOD}{$\checkmark$} Filipino};
 \fill[BN!20, rounded corners=1mm] (66,12.3) rectangle (81,19.7);
 \node[font=\Large\bfseries, text=BN] at (73.5,16) {?};
 \node[tb] at (41,5) {\textcolor{BN}{\textbf{?}} = this study, on matched EN--BN problems};
@@ -111,8 +111,8 @@
 \node[font=\Large\bfseries, text=NAVY] at (41,34) {$\Delta$};
 \node[font=\Large, text=NAVY] at (68,34) {$\circlearrowleft$};
 \node[tb] at (14,22.5) {EN--BN sharded\\math dataset};
-\node[tb] at (41,22.5) {Extra-loss\\measurement};
-\node[tb] at (68,22.5) {Fix gain:\\EN vs BN};
+\node[tb] at (41,22.5) {Extra Bangla\\loss measured};
+\node[tb] at (68,22.5) {Does a fix\\help Bangla too?};
 % timeline
 \draw[NAVY, line width=1.2pt, -{Stealth[length=2mm]}] (4,9) -- (79,9);
 \foreach \x/\task/\when in {11/data + pilot/mid-Dec, 32/main runs/mid-Jan, 53/draft/early Feb, 72/submit/15 Feb} {
@@ -130,7 +130,7 @@
 \node[enbox] (enp) at (66,38) {English\\pieces};
 \node[bnbox] (bnp) at (66,15) {Bangla\\pieces};
 \node[dec, draw=BN, fill=BN!8] (chk) at (39,15) {same\\info?};
-\node[box, double, double distance=0.8pt] (frz) at (17.5,6.5) {frozen list\\100 $\times$ 2};
+\node[box, double, double distance=0.8pt] (frz) at (17.5,6.5) {final list\\100 $\times$ 2};
 \draw[arr] (src) -- (pick);
 \draw[arr] (pick) |- (cut);
 \draw[arr] (cut) -- (enp);
@@ -139,7 +139,7 @@
 \draw[arr] (chk.west) -| node[lab, pos=0.3, above, fill=none] {yes} (frz.north);
 \draw[arr, BN] (chk.south) -- ++(0,-4.5) -| node[lab, pos=0.25, below, fill=none] {no: fix} (bnp.south);
 \node[font=\scriptsize, text=GRY, align=center] at (9,17.5) {250 / lang.};
-\node[font=\scriptsize, text=GRY, align=center] at (85,27) {CC BY-SA\\4.0};
+\node[font=\scriptsize, text=GRY, align=center] at (85,27) {open\\licence};
 \end{scope}
 
 % ================= PANEL 4: MODELS =================
@@ -154,10 +154,10 @@
 \draw[arr] (31,15) -- (31,12.5);
 \node[box, double, double distance=0.8pt, fill=GOOD!10] at (31,8.5) {tested models};
 \draw[arr, GRY, dashed] (48.5,19.5) -- (52,14.5);
-\node[t, text=GRY] at (52,9) {fail:\\excluded,\\reported};
+\node[t, text=GRY] at (52,9) {fail:\\dropped,\\reported};
 \draw[NAVY!40, dashed] (63,4) -- (63,46);
 \node[gbox] at (77.5,35) {Qwen3.8-27B\\simulated user\\+ checker\\\textbf{never tested}};
-\node[box, fill=BN!10, draw=BN] at (77.5,13) {Why 30\%?\\expected drop\\$\approx$12 pts $>$ 2$\times$\\noise (4.6)};
+\node[box, fill=BN!10, draw=BN] at (77.5,13) {Why 30\%?\\near-zero scores\\have no room\\to drop};
 \end{scope}
 
 % ================= PANEL 5: FAIR COMPARISON =================
@@ -220,21 +220,21 @@
 \node[font=\footnotesize\bfseries, text=BN] at (59,4.5) {Bangla};
 \node[font=\small\bfseries, text=BN] at (59,41) {loss 25};
 % legend
-\fill[EN] (76,38) rectangle ++(1.25,2.5); \fill[BN] (77.25,38) rectangle ++(1.25,2.5); \node[t, anchor=west] at (79,39.2) {Concat (whole)};
-\fill[EN!35] (76,33) rectangle ++(1.25,2.5); \fill[BN!35] (77.25,33) rectangle ++(1.25,2.5); \node[t, anchor=west] at (79,34.2) {Sharded (pieces)};
+\fill[EN] (76,38) rectangle ++(1.25,2.5); \fill[BN] (77.25,38) rectangle ++(1.25,2.5); \node[t, anchor=west] at (79,39.2) {1 message};
+\fill[EN!35] (76,33) rectangle ++(1.25,2.5); \fill[BN!35] (77.25,33) rectangle ++(1.25,2.5); \node[t, anchor=west] at (79,34.2) {1 piece per turn};
 % result
-\node[box, fill=BN!12, draw=BN, font=\small\bfseries, align=center] at (88,20) {$\Delta$ = 25 $-$ 20\\= +5 points};
-\node[t, align=center] at (88,10.5) {+ 95\% interval};
+\node[box, fill=BN!12, draw=BN, font=\footnotesize\bfseries, align=center] at (89,20) {extra Bangla loss\\25 $-$ 20 = +5 points};
+\node[t, align=center] at (88,10.5) {+ likely range};
 \node[font=\scriptsize\itshape, text=GRY] at (88,4) {illustrative, no results yet};
 \end{scope}
 
 % ================= PANEL 8: MEANING =================
 \panel{178}{13}{107}{52}{8}{What a result would mean}
 \begin{scope}[shift={(178,13)}]
-\node[dec, fill=NAVY!8, font=\small\bfseries] (d) at (13,22) {$\Delta$};
-\node[bnbox, minimum width=66mm, minimum height=9mm, anchor=west] (p) at (34,36) {\textbf{$\Delta>0$: more loss in Bangla}\\splitting hurts Bangla more};
-\node[gbox, minimum width=66mm, minimum height=9mm, anchor=west] (z) at (34,22) {\textbf{Difference unclear}\\95\% interval includes 0};
-\node[enbox, minimum width=66mm, minimum height=9mm, anchor=west] (n) at (34,8) {\textbf{$\Delta<0$: less loss in Bangla}\\splitting hurts Bangla less};
+\node[dec, fill=NAVY!8, font=\scriptsize\bfseries] (d) at (13,22) {extra\\loss};
+\node[bnbox, minimum width=66mm, minimum height=9mm, anchor=west] (p) at (34,36) {\textbf{More loss in Bangla}\\whole likely range above 0};
+\node[gbox, minimum width=66mm, minimum height=9mm, anchor=west] (z) at (34,22) {\textbf{Difference unclear}\\likely range includes 0};
+\node[enbox, minimum width=66mm, minimum height=9mm, anchor=west] (n) at (34,8) {\textbf{Less loss in Bangla}\\whole likely range below 0};
 \draw[arr] (d.north east) |- (p.west);
 \draw[arr] (d.east) -- (z.west);
 \draw[arr] (d.south east) |- (n.west);
