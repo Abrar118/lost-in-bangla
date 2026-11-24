@@ -1,5 +1,7 @@
 # Prompt: "Do LLMs Get More Lost in Bangla?" — implementation
 
+> **Superseded on 2026-11-24 by [`docs/agent/`](agent/README.md).** Kept for history.
+
 You are helping a 6-person student group (MIST, CSE 6701 Advanced AI) implement a research project. Work in 4 phases. **Stop at the end of each phase**, show the checkpoint report, and wait for approval before starting the next phase.
 
 ## 1. What the project is
