@@ -74,7 +74,7 @@ See that file. In short: `model_openai.py` replaced; three one-line additions (`
 1. **The real smoke test is not done.** It needs the Qwen simulator on the Windows desktop. I cannot start it, and opening the Windows firewall is outside the repo, so it needs a person. Steps:
    1. On Windows: pull the repo, make a venv (`py -3.12 -m venv .venv`), `pip install -r requirements.txt`.
    2. Run `python scripts/serve.py simulator`. Check it starts and that the 11.8 GB model fits (lower `ctx_size` in the config if not).
-   3. **Allow the port (8081) through the Windows firewall for the local network. Please approve this.**
+   3. **Allow the port (8081) through the Windows firewall, only from the Mac's address and only on the private network. Please approve this.** The simulator listens on all addresses (`0.0.0.0`) and llama-server has no login, so this rule is what keeps other devices on the network out.
    4. Put the desktop's address into `endpoints.simulator` in `configs/config.yaml` (it still says `127.0.0.1`).
    5. On the Mac: `python scripts/serve.py gemma4-12b`, then `python src/run_conversations.py --phase smoke --model gemma4-12b --problems 3 --settings full sharded --runs 1`.
 2. **Gemma 4 12B thinks by default.** The server returns its thinking text separately, so even "17 × 3" used 93 tokens. We keep the thinking out of the chat and log it (`reasoning_text`). It counts against the 4,096 limit and makes runs slower. Decision for the team: leave it on (matches "kept out of the conversation but logged") or turn it off for Gemma via `request_extra` in the config. I left it on.
