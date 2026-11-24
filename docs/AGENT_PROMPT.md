@@ -5,11 +5,13 @@ You are helping a 6-person student group (MIST, CSE 6701 Advanced AI) implement 
 ## 1. What the project is
 
 **Base paper:** Laban et al., "LLMs Get Lost in Multi-Turn Conversation" (ICLR 2026).
-- Code: https://github.com/microsoft/lost_in_conversation (MIT licence).
+
+- Code: <https://github.com/microsoft/lost_in_conversation> (MIT licence).
 - The paper takes a task, cuts it into small pieces ("shards"), and has a simulated user reveal one piece per turn.
 - Models score much lower this way than when they get the whole task in one message.
 
 **Our study** asks one question: does splitting the same math problem across turns hurt accuracy **more in Bangla than in English**?
+
 - Data: about 100 matched English–Bangla grade-school math problems from MGSM-Rev2.
 - Tested models: free, open models only, run on our own machines.
 - Simulated user and answer checker: one fixed open model.
@@ -17,7 +19,7 @@ You are helping a 6-person student group (MIST, CSE 6701 Advanced AI) implement 
 **Settings** (same names as the base paper):
 
 | Setting | What the model sees |
-|---|---|
+| --- | --- |
 | FULL | The original problem in one message |
 | CONCAT | All shards joined in one message |
 | SHARDED | One shard per turn; the simulated user picks which shard to reveal next. Shard 1 always comes first. |
@@ -35,7 +37,7 @@ You are helping a 6-person student group (MIST, CSE 6701 Advanced AI) implement 
 ## 2. Hard rules
 
 1. **No paid API calls, ever.** This includes OpenAI, Azure, Anthropic and Google. If any code path would call one, disable it and tell me.
-2. **Serving:** run models with **llama.cpp (`llama-server`)** behind an OpenAI-compatible endpoint. Do not use Ollama.
+2. **Serving:** run models with **llama.cpp (`llama-server`)** behind an OpenAI-compatible endpoint. Do not use Ollama. llama.cpp should be installed already. I have been using it for thesis and for running Qwen as a daily driver.
 3. **Don't edit upstream logic.** Keep the upstream repo pinned to one commit, as a git submodule or a vendored copy with the commit hash recorded. Add our code next to it, for example as an adapter for the model client.
 4. **One config file** (`config.yaml`) is the single source of truth for:
    - model names and quantisation
@@ -58,19 +60,22 @@ You are helping a 6-person student group (MIST, CSE 6701 Advanced AI) implement 
 ## 3. Hardware: detect, don't assume
 
 Expected machines (verify them, don't trust this list):
-- **Desktop:** RTX 5060 Ti 16 GB, 32 GB RAM, Ubuntu.
-- **Second GPU machine:** 8 GB.
+
+- **Desktop:** RTX 5060 Ti 16 GB, 32 GB RAM, windows (this pc). WSL available.
+- **Second GPU machine:** 8 GB (RTX 3070 but can rarely be used)
 - **MacBook Pro:** M5 Pro, 24 GB unified memory (development machine; can also serve via llama.cpp Metal).
 
 Known risk:
-- At Q4, the simulator (**Qwen3.8-27B**) is probably about 16–17 GB, so it may not fit fully on the 16 GB GPU.
-- The simulator and a tested model must both be running during SHARDED conversations.
+
+- At Q4, the simulator (**Qwen3.8-27B**) is probably about 16–17 GB, so it may not fit fully on the 16 GB GPU. I have an IQ3_XXS downloaded with an inference engine at this path: "G:\Agents".
+- The simulator and a tested model must both be running during SHARDED conversations. We can create an hydrid setup for this if possible - the tested model can run on the mac and the simulator can run on this pc.
 
 Measure the real memory use, then propose a placement plan. For example: the simulator on the Mac over the local network, and the tested models on the desktop and the 8 GB machine.
 
 ## Phase 1: set up the repository
 
 1. **Repo layout:**
+
    ```
    upstream/   pinned base-paper code
    src/        our code
@@ -81,6 +86,7 @@ Measure the real memory use, then propose a placement plan. For example: the sim
    notebooks/
    README.md
    ```
+
 2. **Python environment:** use `uv` or `venv` with pinned versions, and install upstream `requirements.txt` plus our extras.
 3. **Build llama.cpp** with CUDA on Linux and Metal on Mac. Write one script, `scripts/serve.sh <model-key>`, that starts `llama-server` for a model named in `config.yaml`.
 4. **Write `src/model_local.py`:** an OpenAI-compatible client that points at our `llama-server` URLs. Wire it into the upstream code so that:
@@ -90,6 +96,7 @@ Measure the real memory use, then propose a placement plan. For example: the sim
 5. **Smoke test:** run the upstream **math** task on 3 problems × FULL and SHARDED × 1 run, using a small model (Llama-3.1-8B).
 
 **Checkpoint 1.** Report:
+
 - the layout tree
 - the upstream commit hash
 - the hardware you found and the placement plan
@@ -99,7 +106,7 @@ Measure the real memory use, then propose a placement plan. For example: the sim
 ## Phase 2: download the models
 
 | Role | Model |
-|---|---|
+| --- | --- |
 | Tested | Llama-3.1-8B-Instruct |
 | Tested | Phi-4 (14B) |
 | Tested | Gemma 4 12B |
@@ -109,11 +116,13 @@ Measure the real memory use, then propose a placement plan. For example: the sim
 1. **Get GGUF weights** from the official publisher, or a well-known converter if no official GGUF exists. Record for each model:
    - the repo, file name, SHA256 and quantisation
    - the licence
+   - Gemma 4 is already downloaded at: "G:\Code\MSc\abrar-thesis\models\gemma4"
 2. **Quantisation:** default Q4_K_M. gpt-oss-20b can use its native MXFP4. Use the **same file for English and Bangla**; that is what keeps the comparison fair.
 3. **Speed and memory test** on each model: tokens/sec and peak memory on its target machine, for a 2,000-token prompt plus a 300-token reply.
 4. **Time estimate:** using the measured speeds, estimate the total hours for Phases 3 and 4.
 
 **Checkpoint 2.** Show:
+
 - a table: model, file, quantisation, licence, machine, memory, tokens/sec
 - the time estimate
 - anything that doesn't fit
@@ -122,13 +131,13 @@ Measure the real memory use, then propose a placement plan. For example: the sim
 
 The goal is to show our local setup behaves like theirs, not to match their numbers exactly. Their simulator was GPT-4o-mini; ours is Qwen3.8-27B.
 
-1. **Data:** the upstream math items in `data/sharded_instructions_600.json`. Report how many there are; the paper says 103.
+1. **Data:** the upstream math items in `data/sharded_instructions_600.json`. Report how many there are; the paper says 103. See if we can add every dataset also? Just doing math seems underwhelming.
 2. **Models:** Llama-3.1-8B-Instruct and Phi-4, which are both in the base paper.
 3. **Runs:** FULL, CONCAT and SHARDED, 5 runs each, temperature 1.0 (as in the paper; confirm against the upstream defaults).
 4. **Metrics:** as in the paper (§4.2):
 
    | Metric | How it's computed |
-   |---|---|
+   | --- | --- |
    | Average accuracy (P) | Mean score across runs and problems |
    | Aptitude (A90) | 90th percentile of the scores across runs for each problem, then averaged over problems |
    | Unreliability (U = 90th − 10th percentile) | 90th minus 10th percentile of the scores across runs for each problem, then averaged over problems |
@@ -140,6 +149,7 @@ The goal is to show our local setup behaves like theirs, not to match their numb
    - marking answers wrong by mistake
 
 **Checkpoint 3.** Show:
+
 - our numbers vs. the paper's, in one table
 - the simulator error notes
 - the time taken
@@ -165,6 +175,7 @@ Do not continue if SHARDED is not clearly below FULL. Report it and stop.
 5. **Freeze:** save the final file with a SHA256 hash. Never edit it after main runs start.
 
 **Checkpoint 4a.** Show:
+
 - the counts
 - the number of reused vs. new shards
 - a 5-problem sample in both languages
@@ -204,7 +215,7 @@ Do not continue if SHARDED is not clearly below FULL. Report it and stop.
 4. **Read each result as:**
 
    | Δ range | Meaning |
-   |---|---|
+   | --- | --- |
    | Entirely above 0 | More loss in Bangla |
    | Entirely below 0 | Less loss in Bangla |
    | Includes 0 | Difference unclear |
