@@ -1,0 +1,55 @@
+# One config file for the whole project (see docs/agent/00-context.md, rule 5).
+# Paths are relative to the repo root unless they are absolute.
+
+paths:
+  upstream_dir: upstream
+  dataset: data/sharded_instructions_600.json   # relative to upstream_dir (upstream code runs from there)
+  logs_dir: results/logs
+
+# Where llama-server lives on each machine. serve.py picks the entry for the machine it runs on.
+llama_server:
+  mac: /opt/homebrew/bin/llama-server
+  windows: 'G:\Agents\llama-cpp\llama-server.exe'
+
+# Where the two servers are. The simulator runs on the Windows desktop; the tested model on the Mac.
+endpoints:
+  simulator: http://127.0.0.1:8081/v1   # TODO: set to the Windows desktop's LAN address, e.g. http://192.168.x.x:8081/v1
+  tested: http://127.0.0.1:8080/v1
+
+seed_salt: 42            # mixed into every per-request seed (problem, setting, language, run)
+request_timeout_s: 900   # local models are slow; upstream used 30 s
+request_retries: 3
+
+# Sampling for the tested models. Same for every model and both languages (matches the paper).
+tested_sampling:
+  temperature: 1.0
+  top_p: 1.0
+  top_k: 0
+  min_p: 0.0
+tested_max_tokens: 4096  # GUESS. Upstream used 1000, which cuts Bangla off more. Phase 2 checks the cut-off rate.
+
+# Simulator: upstream sets only the temperature per call (0.0 for the checker/extractor, 1.0 for the user).
+# Everything else is llama-server's own default. Extra settings could go here; empty means "upstream's".
+simulator_sampling: {}
+simulator_max_tokens: 1024   # upstream set no limit on these JSON replies; this is only a safety stop
+
+simulator:
+  key: qwen3.8-27b-iq3_s
+  quant: IQ3_S
+  sha256: null               # not measured yet (file is on the Windows desktop)
+  files:
+    windows: G:/Agents/models/Qwen3.8-27B-GSQ-RCO-IQ3_S.gguf
+  server: {host: 0.0.0.0, port: 8081, ctx_size: 16384, gpu_layers: 99, parallel: 1, extra_args: [--cache-ram, 0]}
+  # Thinking off: sent with every request. Checked in the logs (no reasoning text should appear).
+  request_extra: {chat_template_kwargs: {enable_thinking: false}}
+
+tested_models:
+  gemma4-12b:
+    quant: Q4_K_M
+    sha256: 3962624dcd25b947d889dc9ae1bf275b61db6cd4dbe694057f34fffef1671509   # Mac copy, measured 2026-11-24 (shasum -a 256)
+    licence: Gemma terms of use (not checked by us yet)
+    files:
+      mac: /Users/orion-abrar/Code/masters/Thesis/models/gemma4/gemma-4-12B-it-Q4_K_M.gguf
+      windows: G:/Code/MSc/abrar-thesis/models/gemma4/gemma-4-12B-it-Q4_K_M.gguf
+    server: {host: 127.0.0.1, port: 8080, ctx_size: 16384, gpu_layers: 99, parallel: 1, extra_args: [--cache-ram, 0]}  # cache-ram 0: no RAM prompt cache (default 8 GiB)
+    request_extra: {}

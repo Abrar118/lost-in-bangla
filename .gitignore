@@ -2,3 +2,7 @@
 *.aux
 *.log
 *.out
+.venv/
+__pycache__/
+results/*
+!results/summary*.md
